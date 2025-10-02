@@ -1,0 +1,13 @@
+{
+  "name": "restu-app",
+  "version": "1.0.0",
+  "description": "Restaurant management application",
+  "scripts": {
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

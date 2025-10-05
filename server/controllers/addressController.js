@@ -3,7 +3,7 @@
 
 // Add address: /api/address/add
 
-import Address from "../models/Address.js";
+import Address from "../models/address.js";
 
 export const addAddress = async(req,res)=>{
     try {

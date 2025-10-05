@@ -26,6 +26,7 @@ async function connectServices() {
             console.log('Database connected');
         } catch (error) {
             console.error('Database connection failed:', error);
+            // Don't throw error, just log it - the app should still work for non-DB routes
         }
     }
     
@@ -37,6 +38,7 @@ async function connectServices() {
             console.log('Cloudinary connected');
         } catch (error) {
             console.error('Cloudinary connection failed:', error);
+            // Don't throw error, just log it - the app should still work for non-Cloudinary routes
         }
     }
 }
@@ -74,8 +76,27 @@ app.use(cors({
 }));
 
 // Routes
-app.get('/', (req, res) => res.json({ message: "API is working" }));
+app.get('/', (req, res) => {
+    res.json({ 
+        message: "API is working",
+        timestamp: new Date().toISOString(),
+        services: {
+            database: dbConnected,
+            cloudinary: cloudinaryConnected
+        }
+    });
+});
 app.get('/api', (req, res) => res.json({ message: "API is working" }));
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        services: {
+            database: dbConnected,
+            cloudinary: cloudinaryConnected
+        }
+    });
+});
 
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
@@ -106,11 +127,20 @@ app.use('*', (req, res) => {
 
 // Export the Express API for Vercel
 export default async function handler(req, res) {
-    // Connect to services before handling requests
-    await connectServices();
-    
-    // Handle the request with Express
-    return app(req, res);
+    try {
+        // Connect to services before handling requests
+        await connectServices();
+        
+        // Handle the request with Express
+        return app(req, res);
+    } catch (error) {
+        console.error('Handler error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+        });
+    }
 }
 
 // For local development

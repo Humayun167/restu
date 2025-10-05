@@ -77,35 +77,59 @@ app.use(cors({
 
 // Routes
 app.get('/', (req, res) => {
-    res.json({ 
-        message: "API is working",
-        timestamp: new Date().toISOString(),
-        services: {
-            database: dbConnected,
-            cloudinary: cloudinaryConnected
-        }
-    });
-});
-app.get('/api', (req, res) => res.json({ message: "API is working" }));
-app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        services: {
-            database: dbConnected,
-            cloudinary: cloudinaryConnected
-        }
-    });
+    try {
+        res.json({ 
+            message: "API is working",
+            timestamp: new Date().toISOString(),
+            services: {
+                database: dbConnected,
+                cloudinary: cloudinaryConnected
+            }
+        });
+    } catch (error) {
+        console.error('Root route error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-app.use('/api/user', userRouter);
-app.use('/api/admin', adminRouter);
-app.use('/api/product', productRouter); 
-app.use('/api/cart', cartRouter); 
-app.use('/api/order', orderRouter);
-app.use('/api/address', addressRouter);
-app.use('/api/reservation', reservationRouter);
-app.use('/api/dashboard', dashboardRouter);
+app.get('/api', (req, res) => {
+    try {
+        res.json({ message: "API is working" });
+    } catch (error) {
+        console.error('API route error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/health', (req, res) => {
+    try {
+        res.json({
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            services: {
+                database: dbConnected,
+                cloudinary: cloudinaryConnected
+            }
+        });
+    } catch (error) {
+        console.error('Health route error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Wrap route imports in try-catch to prevent import errors from crashing
+try {
+    app.use('/api/user', userRouter);
+    app.use('/api/admin', adminRouter);
+    app.use('/api/product', productRouter); 
+    app.use('/api/cart', cartRouter); 
+    app.use('/api/order', orderRouter);
+    app.use('/api/address', addressRouter);
+    app.use('/api/reservation', reservationRouter);
+    app.use('/api/dashboard', dashboardRouter);
+} catch (error) {
+    console.error('Router setup error:', error);
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -125,21 +149,33 @@ app.use('*', (req, res) => {
     });
 });
 
+// Initialize services once
+let initialized = false;
+
+async function initializeApp() {
+    if (!initialized) {
+        await connectServices();
+        initialized = true;
+    }
+}
+
 // Export the Express API for Vercel
 export default async function handler(req, res) {
     try {
-        // Connect to services before handling requests
-        await connectServices();
+        // Initialize services only once
+        await initializeApp();
         
         // Handle the request with Express
-        return app(req, res);
+        app(req, res);
     } catch (error) {
         console.error('Handler error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal Server Error',
-            error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-        });
+        if (!res.headersSent) {
+            return res.status(500).json({
+                success: false,
+                message: 'Internal Server Error',
+                error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+            });
+        }
     }
 }
 
@@ -148,7 +184,7 @@ if (process.env.NODE_ENV !== 'production') {
     const port = process.env.PORT || 4000;
     
     (async () => {
-        await connectServices();
+        await initializeApp();
         app.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });

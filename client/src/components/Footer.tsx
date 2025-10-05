@@ -61,10 +61,10 @@ const Footer = () => {
           {/* Restaurant Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <h4 className="text-xl font-bold text-foreground">Tastyc</h4>
+              <h4 className="text-xl font-bold text-foreground">Restu</h4>
             </div>
             <p className="text-foreground/70 leading-relaxed">
-              Experience authentic flavors and exceptional dining at Tastyc. We serve fresh, delicious meals made with love and the finest ingredients.
+              Experience authentic flavors and exceptional dining at Restu. We serve fresh, delicious meals made with love and the finest ingredients.
             </p>
             <div className="flex space-x-4">
               <Button variant="ghost" size="sm" className="p-2 hover:bg-primary hover:text-primary-foreground">
@@ -189,7 +189,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-center md:text-left">
             <p className="text-foreground/60 text-sm">
-              © 2025 Tastyc Restaurant. All rights reserved.
+              © 2025 Restu Restaurant. All rights reserved.
             </p>
           </div>
           <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">

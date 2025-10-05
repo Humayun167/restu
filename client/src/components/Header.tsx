@@ -41,7 +41,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-foreground">Tastyc</h1>
+            <h1 className="text-2xl font-bold text-foreground">Restu</h1>
           </div>
 
           {/* Desktop Navigation */}

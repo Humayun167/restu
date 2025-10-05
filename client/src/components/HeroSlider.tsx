@@ -11,7 +11,7 @@ const slides = [
     id: 1,
     image: heroSlide1,
     subtitle: "Hello, new friend!",
-    title: "Welcome Back\nto Tastyc",
+    title: "Welcome Back\nto Restu",
     description: "Quaerat debitis, vel, sapiente dicta sequi\nlabore porro pariatur harum expedita.",
     primaryButton: "RESERVATION",
     secondaryButton: "OPEN MENU",

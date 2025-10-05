@@ -91,7 +91,7 @@ const Reservations = () => {
                   <Mail className="h-5 w-5 text-primary" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-sm text-foreground/70">reservations@tastyc.com</p>
+                    <p className="text-sm text-foreground/70">reservations@restu.com</p>
                   </div>
                 </div>
               </CardContent>

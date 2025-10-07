@@ -20,6 +20,7 @@ import UserAddress from "./pages/UserAddress";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminDebug from "./components/admin/AdminDebug";
 import DashboardOverview from "./components/admin/DashboardOverview";
 import AddProduct from "./components/admin/AddProduct";
 import ProductList from "./components/admin/ProductList";
@@ -47,6 +48,7 @@ const AppContent = () => {
         <Route path="/reservations" element={<Reservations />} />
         
         {/* Admin Routes */}
+        <Route path="/admin/debug" element={<AdminDebug />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />}>
           <Route path="dashboard" element={<DashboardOverview />} />

@@ -24,7 +24,8 @@ export const adminLogin = async(req,res)=>{
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Allow cross-site cookies in production
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
+            domain: process.env.NODE_ENV === 'production' ? undefined : undefined, // Let browser handle domain
+            path: '/' // Ensure cookie is available for all paths
         };
 
         res.cookie('adminToken', token, cookieOptions);
@@ -61,7 +62,8 @@ export const adminLogout = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Allow cross-site cookies in production
-            domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
+            domain: process.env.NODE_ENV === 'production' ? undefined : undefined, // Let browser handle domain
+            path: '/' // Ensure cookie is available for all paths
         };
 
         res.clearCookie('adminToken', cookieOptions);

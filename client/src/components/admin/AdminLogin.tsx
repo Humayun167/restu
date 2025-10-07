@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import axios from 'axios';
+
+// Create axios instance with same config as main API
+const adminAPI = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000',
+  withCredentials: true,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
@@ -15,17 +26,14 @@ const AdminLogin = () => {
 
         try {
             console.log('Sending login request with:', { email, password });
+            console.log('API Base URL:', import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000');
             
-            const response = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Important for cookies
-                body: JSON.stringify({ email, password })
+            const response = await adminAPI.post('/api/admin/login', {
+                email,
+                password
             });
 
-            const data = await response.json();
+            const data = response.data;
             console.log('Login response:', data);
             
             if (data.success) {

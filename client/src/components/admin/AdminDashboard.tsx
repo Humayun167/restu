@@ -2,6 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { assets } from '@/assets/assets';
+import axios from 'axios';
+
+// Create axios instance with same config as main API
+const adminAPI = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000',
+  withCredentials: true,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -11,16 +22,17 @@ const AdminDashboard = () => {
         // Check if admin is authenticated using the API
         const checkAuth = async () => {
             try {
-                const response = await fetch('/api/admin/is-auth', {
-                    credentials: 'include'
-                });
-                const data = await response.json();
+                console.log('Checking admin auth with:', import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000');
+                const response = await adminAPI.get('/api/admin/is-auth');
+                const data = response.data;
                 
                 if (!data.success) {
+                    localStorage.removeItem('isAdminLoggedIn');
                     navigate('/admin/login');
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
+                localStorage.removeItem('isAdminLoggedIn');
                 navigate('/admin/login');
             }
         };
@@ -30,10 +42,7 @@ const AdminDashboard = () => {
 
     const handleLogout = async () => {
         try {
-            await fetch('/api/admin/logout', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            await adminAPI.get('/api/admin/logout');
             localStorage.removeItem('isAdminLoggedIn');
             navigate('/admin/login');
         } catch (error) {

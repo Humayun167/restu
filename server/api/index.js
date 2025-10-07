@@ -61,24 +61,32 @@ const allowedOrigins = [
 // Middleware configuration
 app.use(express.json());
 app.use(cookieParser());
+
+// Enhanced CORS configuration for Vercel deployment
 app.use(cors({
     origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         
+        // Allow configured origins
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
         
+        // Allow any vercel.app subdomain or localhost
         if (origin && (origin.includes('.vercel.app') || origin.includes('localhost'))) {
             return callback(null, true);
         }
         
+        console.log('CORS rejected origin:', origin);
         return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    optionsSuccessStatus: 200
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['Set-Cookie'],
+    optionsSuccessStatus: 200,
+    preflightContinue: false
 }));
 
 // Routes

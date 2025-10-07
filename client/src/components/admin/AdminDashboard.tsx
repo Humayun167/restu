@@ -34,9 +34,16 @@ const AdminDashboard = () => {
                     return;
                 }
                 
-                console.log('Checking admin auth with:', import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000');
+                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+                console.log('=== Admin Auth Debug ===');
+                console.log('Environment mode:', import.meta.env.MODE);
+                console.log('Backend URL:', backendUrl);
+                console.log('Current URL:', window.location.origin);
+                console.log('LocalStorage flag:', isLoggedIn);
+                
                 const response = await adminAPI.get('/api/admin/is-auth');
                 const data = response.data;
+                console.log('Auth API response:', data);
                 
                 if (data.success) {
                     setIsAuthenticated(true);

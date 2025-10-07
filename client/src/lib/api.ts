@@ -255,11 +255,16 @@ export const orderAPI = {
 // Admin API (if needed)
 export const adminAPI = {
   addProduct: async (productData: FormData): Promise<ApiResponse> => {
-    const response = await api.post('/api/admin/products', productData, {
+    const response = await api.post('/api/product/add', productData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  },
+
+  deleteProduct: async (productId: string): Promise<ApiResponse> => {
+    const response = await api.delete(`/api/product/delete/${productId}`);
     return response.data;
   },
 

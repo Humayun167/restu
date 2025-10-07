@@ -42,18 +42,46 @@ const ProductList = () => {
 
         setIsLoading(true);
         try {
-            // Call delete API - for now we'll skip deletion and just refresh
-            // TODO: Implement delete endpoint on backend
-            await refreshProducts();
-            
-            toast({
-                title: "Success!",
-                description: "Product list refreshed.",
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                toast({
+                    title: "Error",
+                    description: "Admin authentication required. Please login again.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            const response = await fetch(`/api/product/delete/${productId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                toast({
+                    title: "Success!",
+                    description: "Product deleted successfully.",
+                });
+                // Refresh the products list to reflect the deletion
+                await refreshProducts();
+            } else {
+                toast({
+                    title: "Error",
+                    description: data.message || "Failed to delete product.",
+                    variant: "destructive",
+                });
+            }
         } catch (error) {
+            console.error('Error deleting product:', error);
             toast({
                 title: "Error",
-                description: "Failed to refresh products. Please try again.",
+                description: "Failed to delete product. Please try again.",
                 variant: "destructive",
             });
         } finally {

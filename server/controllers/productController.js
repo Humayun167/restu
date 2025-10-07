@@ -67,6 +67,48 @@ export const changeStock = async (req, res) => {
     }
 }
 
+// delete product: /api/product/delete/:id
+export const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('🗑️ Deleting product with ID:', id);
+        
+        // First, find the product to get image URLs for cleanup
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.json({success: false, message: "Product not found"});
+        }
+        
+        // Delete images from Cloudinary
+        if (product.image && product.image.length > 0) {
+            try {
+                await Promise.all(
+                    product.image.map(async(imageUrl) => {
+                        // Extract public_id from Cloudinary URL
+                        const publicId = imageUrl.split('/').pop()?.split('.')[0];
+                        if (publicId) {
+                            await cloudinary.uploader.destroy(publicId);
+                            console.log('🖼️ Deleted image from Cloudinary:', publicId);
+                        }
+                    })
+                );
+            } catch (imageError) {
+                console.log('⚠️ Error deleting images from Cloudinary:', imageError.message);
+                // Continue with product deletion even if image cleanup fails
+            }
+        }
+        
+        // Delete the product from database
+        await Product.findByIdAndDelete(id);
+        console.log('✅ Product deleted successfully');
+        
+        res.json({success: true, message: "Product deleted successfully"});
+    } catch (error) {
+        console.log('❌ Delete product error:', error.message);
+        return res.json({success: false, message: error.message});
+    }
+}
+
 // search products: /api/product/search
 export const searchProducts = async (req, res) => {
     try {

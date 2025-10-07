@@ -16,24 +16,50 @@ const adminAPI = axios.create({
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [isAuthChecking, setIsAuthChecking] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         // Check if admin is authenticated using the API
         const checkAuth = async () => {
             try {
+                setIsAuthChecking(true);
+                
+                // First check localStorage for basic auth state
+                const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
+                if (!isLoggedIn) {
+                    console.log('No admin login flag in localStorage');
+                    navigate('/admin/login');
+                    return;
+                }
+                
                 console.log('Checking admin auth with:', import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000');
                 const response = await adminAPI.get('/api/admin/is-auth');
                 const data = response.data;
                 
-                if (!data.success) {
+                if (data.success) {
+                    setIsAuthenticated(true);
+                    console.log('Admin authentication successful');
+                } else {
+                    console.log('Admin authentication failed:', data.message);
                     localStorage.removeItem('isAdminLoggedIn');
                     navigate('/admin/login');
                 }
             } catch (error) {
-                console.error('Auth check failed:', error);
-                localStorage.removeItem('isAdminLoggedIn');
-                navigate('/admin/login');
+                console.error('Auth check failed:', error.response?.data || error.message);
+                
+                // Only redirect to login if it's a 401/403 error or network issue
+                if (error.response?.status === 401 || error.response?.status === 403 || !error.response) {
+                    localStorage.removeItem('isAdminLoggedIn');
+                    navigate('/admin/login');
+                } else {
+                    // For other errors, assume temporary issue and stay authenticated
+                    console.log('Temporary auth check issue, staying logged in');
+                    setIsAuthenticated(true);
+                }
+            } finally {
+                setIsAuthChecking(false);
             }
         };
         
@@ -42,14 +68,19 @@ const AdminDashboard = () => {
 
     const handleLogout = async () => {
         try {
+            setIsAuthChecking(true);
             await adminAPI.get('/api/admin/logout');
             localStorage.removeItem('isAdminLoggedIn');
+            setIsAuthenticated(false);
             navigate('/admin/login');
         } catch (error) {
             console.error('Logout failed:', error);
             // Force logout even if API call fails
             localStorage.removeItem('isAdminLoggedIn');
+            setIsAuthenticated(false);
             navigate('/admin/login');
+        } finally {
+            setIsAuthChecking(false);
         }
     };
 
@@ -60,6 +91,23 @@ const AdminDashboard = () => {
         { id: 'orders', label: 'Orders', path: '/admin/orders' },
         { id: 'reservations', label: 'Reservations', path: '/admin/reservations' },
     ];
+
+    // Show loading while checking authentication
+    if (isAuthChecking) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-gray-600">Checking authentication...</p>
+                </div>
+            </div>
+        );
+    }
+    
+    // Only render dashboard if authenticated
+    if (!isAuthenticated) {
+        return null; // This should not be reached due to navigation, but just in case
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">

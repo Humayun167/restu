@@ -45,7 +45,11 @@ const AdminLogin = () => {
                     title: "Login Successful",
                     description: "Welcome to the admin dashboard!",
                 });
-                navigate('/admin/dashboard');
+                
+                // Wait a brief moment to ensure cookies are set before navigating
+                setTimeout(() => {
+                    navigate('/admin/dashboard');
+                }, 100);
             } else {
                 toast({
                     title: "Login Failed",
@@ -55,9 +59,17 @@ const AdminLogin = () => {
             }
         } catch (error) {
             console.error('Login error:', error);
+            
+            let errorMessage = "An error occurred during login";
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
             toast({
-                title: "Error",
-                description: "An error occurred during login",
+                title: "Login Failed",
+                description: errorMessage,
                 variant: "destructive",
             });
         } finally {

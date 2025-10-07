@@ -21,10 +21,9 @@ export const adminLogin = async(req,res)=>{
         // Cookie configuration for cross-origin requests
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Allow cross-site cookies in production
+            secure: true, // Always use secure cookies (required for production)
+            sameSite: 'None', // Required for cross-origin requests
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            domain: process.env.NODE_ENV === 'production' ? undefined : undefined, // Let browser handle domain
             path: '/' // Ensure cookie is available for all paths
         };
 
@@ -33,7 +32,12 @@ export const adminLogin = async(req,res)=>{
         console.log('Admin logged in successfully, token set:', !!token);
         console.log('Cookie options:', cookieOptions);
 
-        return res.json({success: true, message: 'Admin logged in successfully'});
+        // Also return the token in the response for fallback authentication
+        return res.json({
+            success: true, 
+            message: 'Admin logged in successfully',
+            token: token // Include token for client-side storage as fallback
+        });
     }
     else{
         return res.json({success: false, message: 'Invalid credentials'});
@@ -60,9 +64,8 @@ export const adminLogout = async (req, res) => {
     try {
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Allow cross-site cookies in production
-            domain: process.env.NODE_ENV === 'production' ? undefined : undefined, // Let browser handle domain
+            secure: true, // Always use secure cookies (required for production)
+            sameSite: 'None', // Required for cross-origin requests
             path: '/' // Ensure cookie is available for all paths
         };
 

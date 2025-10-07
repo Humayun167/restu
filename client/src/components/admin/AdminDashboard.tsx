@@ -14,6 +14,15 @@ const adminAPI = axios.create({
   },
 });
 
+// Add request interceptor to include token in headers as fallback
+adminAPI.interceptors.request.use((config) => {
+  const token = localStorage.getItem('adminToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [isAuthChecking, setIsAuthChecking] = useState(true);
@@ -51,6 +60,7 @@ const AdminDashboard = () => {
                 } else {
                     console.log('Admin authentication failed:', data.message);
                     localStorage.removeItem('isAdminLoggedIn');
+                    localStorage.removeItem('adminToken');
                     navigate('/admin/login');
                 }
             } catch (error) {
@@ -59,6 +69,7 @@ const AdminDashboard = () => {
                 // Only redirect to login if it's a 401/403 error or network issue
                 if (error.response?.status === 401 || error.response?.status === 403 || !error.response) {
                     localStorage.removeItem('isAdminLoggedIn');
+                    localStorage.removeItem('adminToken');
                     navigate('/admin/login');
                 } else {
                     // For other errors, assume temporary issue and stay authenticated
@@ -78,12 +89,14 @@ const AdminDashboard = () => {
             setIsAuthChecking(true);
             await adminAPI.get('/api/admin/logout');
             localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('adminToken');
             setIsAuthenticated(false);
             navigate('/admin/login');
         } catch (error) {
             console.error('Logout failed:', error);
             // Force logout even if API call fails
             localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('adminToken');
             setIsAuthenticated(false);
             navigate('/admin/login');
         } finally {

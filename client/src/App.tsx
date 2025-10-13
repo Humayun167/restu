@@ -9,6 +9,7 @@ import { UserProvider } from "./context/UserContext";
 import { ProductProvider } from "./context/ProductContext";
 import { ChatbotProvider } from "./context/ChatbotContext";
 import ChatbotWidget from "./components/ChatbotWidget";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
@@ -36,6 +37,7 @@ const AppContent = () => {
   
   return (
     <div className="min-h-screen">
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/cart" element={<Cart />} />

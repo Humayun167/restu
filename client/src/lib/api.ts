@@ -13,18 +13,22 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    // Add auth token to requests (user auth)
+    // Check for admin token first (for admin-related requests)
+    const adminToken = localStorage.getItem('adminToken');
+    const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+    
+    // If admin is logged in, use admin token
+    if (isAdminLoggedIn === 'true' && adminToken && config.headers) {
+      config.headers.Authorization = `Bearer ${adminToken}`;
+      console.log('🔗 Adding admin token to request:', adminToken.substring(0, 20) + '...');
+      return config;
+    }
+    
+    // Otherwise, use user token (user auth)
     const token = localStorage.getItem('token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('🔗 Adding token to request:', token.substring(0, 20) + '...');
-    }
-    
-    // Add admin token to requests as fallback (admin auth)
-    const adminToken = localStorage.getItem('adminToken');
-    if (adminToken && config.headers && !token) {
-      config.headers.Authorization = `Bearer ${adminToken}`;
-      console.log('🔗 Adding admin token to request:', adminToken.substring(0, 20) + '...');
+      console.log('🔗 Adding user token to request:', token.substring(0, 20) + '...');
     }
     
     return config;

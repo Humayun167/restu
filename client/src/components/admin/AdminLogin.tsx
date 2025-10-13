@@ -41,6 +41,12 @@ const AdminLogin = () => {
                 // We can store a flag in localStorage to track login state
                 localStorage.setItem('isAdminLoggedIn', 'true');
                 
+                // Store the token in localStorage as fallback for authorization header
+                if (data.token) {
+                    localStorage.setItem('adminToken', data.token);
+                    console.log('Admin token stored in localStorage');
+                }
+                
                 toast({
                     title: "Login Successful",
                     description: "Welcome to the admin dashboard!",

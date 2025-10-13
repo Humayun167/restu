@@ -196,15 +196,30 @@ const ReservationManagement = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { variant: 'secondary' as const, label: 'Pending' },
-      confirmed: { variant: 'default' as const, label: 'Confirmed' },
-      cancelled: { variant: 'destructive' as const, label: 'Cancelled' },
-      completed: { variant: 'default' as const, label: 'Completed' },
-      'no-show': { variant: 'destructive' as const, label: 'No Show' }
+      pending: { 
+        className: 'bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-50', 
+        label: 'Pending' 
+      },
+      confirmed: { 
+        className: 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-50', 
+        label: 'Confirmed' 
+      },
+      cancelled: { 
+        className: 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-50', 
+        label: 'Cancelled' 
+      },
+      completed: { 
+        className: 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-50', 
+        label: 'Completed' 
+      },
+      'no-show': { 
+        className: 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-50', 
+        label: 'No Show' 
+      }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <Badge className={config.className}>{config.label}</Badge>;
   };
 
   const formatDate = (dateString: string) => {
@@ -224,68 +239,68 @@ const ReservationManagement = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white min-h-screen p-6">
       {/* Header with Stats */}
       <div className="flex flex-col space-y-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reservation Management</h1>
-          <p className="text-gray-600">Manage restaurant reservations and table bookings</p>
+          <h1 className="text-3xl font-bold text-gray-600">Reservation Management</h1>
+          <p className="text-gray-500">Manage restaurant reservations and table bookings</p>
         </div>
 
         {/* Today's Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Today's Reservations</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-gray-500">Today's Reservations</p>
+                  <p className="text-2xl font-bold text-gray-600">
                     {Object.values(todayStats).reduce((sum, stat) => sum + stat.count, 0)}
                   </p>
                 </div>
-                <Calendar className="h-8 w-8 text-primary" />
+                <Calendar className="h-8 w-8 text-gray-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Guests Today</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-gray-500">Total Guests Today</p>
+                  <p className="text-2xl font-bold text-gray-600">
                     {Object.values(todayStats).reduce((sum, stat) => sum + stat.guests, 0)}
                   </p>
                 </div>
-                <Users className="h-8 w-8 text-primary" />
+                <Users className="h-8 w-8 text-gray-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Confirmed Today</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-sm font-medium text-gray-500">Confirmed Today</p>
+                  <p className="text-2xl font-bold text-gray-600">
                     {todayStats.confirmed?.count || 0}
                   </p>
                 </div>
-                <Check className="h-8 w-8 text-green-600" />
+                <Check className="h-8 w-8 text-gray-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Today</p>
-                  <p className="text-2xl font-bold text-yellow-600">
+                  <p className="text-sm font-medium text-gray-500">Pending Today</p>
+                  <p className="text-2xl font-bold text-gray-600">
                     {todayStats.pending?.count || 0}
                   </p>
                 </div>
-                <AlertCircle className="h-8 w-8 text-yellow-600" />
+                <AlertCircle className="h-8 w-8 text-gray-400" />
               </div>
             </CardContent>
           </Card>
@@ -293,34 +308,34 @@ const ReservationManagement = () => {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="bg-white border-gray-200">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-gray-600">
+            <Filter className="h-5 w-5 text-gray-400" />
             Filters
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
-              <Label>Search</Label>
+              <Label className="text-gray-600">Search</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search by name, email, or confirmation number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white border-gray-200"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label className="text-gray-600">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white border-gray-200">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
@@ -331,15 +346,16 @@ const ReservationManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Date</Label>
+              <Label className="text-gray-600">Date</Label>
               <Input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
+                className="bg-white border-gray-200"
               />
             </div>
             <div className="space-y-2">
-              <Label>&nbsp;</Label>
+              <Label className="text-gray-600">&nbsp;</Label>
               <Button 
                 variant="outline" 
                 onClick={() => {
@@ -357,13 +373,13 @@ const ReservationManagement = () => {
       </Card>
 
       {/* Reservations Table */}
-      <Card>
+      <Card className="bg-white border-gray-200">
         <CardHeader>
-          <CardTitle>Reservations ({pagination.total})</CardTitle>
+          <CardTitle className="text-gray-600">Reservations ({pagination.total})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">Loading reservations...</div>
+            <div className="text-center py-8 text-gray-500">Loading reservations...</div>
           ) : reservations.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <p>No reservations found.</p>
@@ -371,41 +387,41 @@ const ReservationManagement = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-2">Confirmation #</th>
-                    <th className="text-left py-3 px-2">Customer</th>
-                    <th className="text-left py-3 px-2">Date & Time</th>
-                    <th className="text-left py-3 px-2">Guests</th>
-                    <th className="text-left py-3 px-2">Status</th>
-                    <th className="text-left py-3 px-2">Table</th>
-                    <th className="text-left py-3 px-2">Actions</th>
+                <thead className="bg-white border-b border-gray-200">
+                  <tr>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Confirmation #</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Customer</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Date & Time</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Guests</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Status</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Table</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-500">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white">
                   {reservations.map((reservation) => (
-                    <tr key={reservation.id} className="border-b hover:bg-gray-50">
+                    <tr key={reservation.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                       <td className="py-3 px-2">
-                        <div className="font-mono text-sm">
+                        <div className="font-mono text-sm text-gray-600">
                           {reservation.confirmationNumber}
                         </div>
                       </td>
                       <td className="py-3 px-2">
                         <div>
-                          <div className="font-medium">{reservation.name}</div>
-                          <div className="text-sm text-gray-500">{reservation.email}</div>
-                          <div className="text-sm text-gray-500">{reservation.phone}</div>
+                          <div className="font-medium text-gray-600">{reservation.name}</div>
+                          <div className="text-sm text-gray-400">{reservation.email}</div>
+                          <div className="text-sm text-gray-400">{reservation.phone}</div>
                         </div>
                       </td>
                       <td className="py-3 px-2">
                         <div>
-                          <div className="font-medium">{formatDate(reservation.date)}</div>
-                          <div className="text-sm text-gray-500">{formatTime(reservation.time)}</div>
+                          <div className="font-medium text-gray-600">{formatDate(reservation.date)}</div>
+                          <div className="text-sm text-gray-400">{formatTime(reservation.time)}</div>
                         </div>
                       </td>
                       <td className="py-3 px-2">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <Users className="h-4 w-4 text-gray-400" />
                           <span>{reservation.guests}</span>
                         </div>
                       </td>
@@ -413,7 +429,7 @@ const ReservationManagement = () => {
                         {getStatusBadge(reservation.status)}
                       </td>
                       <td className="py-3 px-2">
-                        <div className="text-sm">
+                        <div className="text-sm text-gray-600">
                           {reservation.tableNumber || 'Not assigned'}
                         </div>
                       </td>
@@ -422,6 +438,7 @@ const ReservationManagement = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                             onClick={() => {
                               setSelectedReservation(reservation);
                               setIsDetailModalOpen(true);
@@ -432,6 +449,7 @@ const ReservationManagement = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                             onClick={() => openUpdateModal(reservation)}
                           >
                             <Edit className="h-4 w-4" />
@@ -450,16 +468,18 @@ const ReservationManagement = () => {
             <div className="flex justify-center items-center gap-2 mt-4">
               <Button
                 variant="outline"
+                className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                 onClick={() => setPagination(prev => ({ ...prev, current: prev.current - 1 }))}
                 disabled={pagination.current === 1}
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-500">
                 Page {pagination.current} of {pagination.pages}
               </span>
               <Button
                 variant="outline"
+                className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                 onClick={() => setPagination(prev => ({ ...prev, current: prev.current + 1 }))}
                 disabled={pagination.current === pagination.pages}
               >
@@ -472,10 +492,10 @@ const ReservationManagement = () => {
 
       {/* Reservation Detail Modal */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white">
           <DialogHeader>
-            <DialogTitle>Reservation Details</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-600">Reservation Details</DialogTitle>
+            <DialogDescription className="text-gray-500">
               View detailed information about this reservation
             </DialogDescription>
           </DialogHeader>
@@ -484,50 +504,50 @@ const ReservationManagement = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Confirmation Number</Label>
-                  <p className="font-mono">{selectedReservation.confirmationNumber}</p>
+                  <Label className="text-sm font-medium text-gray-500">Confirmation Number</Label>
+                  <p className="font-mono text-gray-600">{selectedReservation.confirmationNumber}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Customer Name</Label>
-                  <p>{selectedReservation.name}</p>
+                  <Label className="text-sm font-medium text-gray-500">Customer Name</Label>
+                  <p className="text-gray-600">{selectedReservation.name}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Email</Label>
-                  <p>{selectedReservation.email}</p>
+                  <Label className="text-sm font-medium text-gray-500">Email</Label>
+                  <p className="text-gray-600">{selectedReservation.email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Phone</Label>
-                  <p>{selectedReservation.phone}</p>
+                  <Label className="text-sm font-medium text-gray-500">Phone</Label>
+                  <p className="text-gray-600">{selectedReservation.phone}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Date & Time</Label>
-                  <p>{formatDate(selectedReservation.date)} at {formatTime(selectedReservation.time)}</p>
+                  <Label className="text-sm font-medium text-gray-500">Date & Time</Label>
+                  <p className="text-gray-600">{formatDate(selectedReservation.date)} at {formatTime(selectedReservation.time)}</p>
                 </div>
               </div>
               
               <div className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Number of Guests</Label>
-                  <p>{selectedReservation.guests}</p>
+                  <Label className="text-sm font-medium text-gray-500">Number of Guests</Label>
+                  <p className="text-gray-600">{selectedReservation.guests}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Status</Label>
+                  <Label className="text-sm font-medium text-gray-500">Status</Label>
                   <div className="mt-1">{getStatusBadge(selectedReservation.status)}</div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Table Number</Label>
-                  <p>{selectedReservation.tableNumber || 'Not assigned'}</p>
+                  <Label className="text-sm font-medium text-gray-500">Table Number</Label>
+                  <p className="text-gray-600">{selectedReservation.tableNumber || 'Not assigned'}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Created</Label>
-                  <p>{formatDate(selectedReservation.createdAt)}</p>
+                  <Label className="text-sm font-medium text-gray-500">Created</Label>
+                  <p className="text-gray-600">{formatDate(selectedReservation.createdAt)}</p>
                 </div>
               </div>
               
               {selectedReservation.specialRequests && (
                 <div className="col-span-2">
-                  <Label className="text-sm font-medium text-gray-600">Special Requests</Label>
-                  <p className="mt-1 text-sm bg-gray-50 p-3 rounded">
+                  <Label className="text-sm font-medium text-gray-500">Special Requests</Label>
+                  <p className="mt-1 text-sm bg-white border border-gray-200 p-3 rounded text-gray-600">
                     {selectedReservation.specialRequests}
                   </p>
                 </div>
@@ -535,8 +555,8 @@ const ReservationManagement = () => {
               
               {selectedReservation.adminNotes && (
                 <div className="col-span-2">
-                  <Label className="text-sm font-medium text-gray-600">Admin Notes</Label>
-                  <p className="mt-1 text-sm bg-gray-50 p-3 rounded">
+                  <Label className="text-sm font-medium text-gray-500">Admin Notes</Label>
+                  <p className="mt-1 text-sm bg-white border border-gray-200 p-3 rounded text-gray-600">
                     {selectedReservation.adminNotes}
                   </p>
                 </div>
@@ -545,11 +565,11 @@ const ReservationManagement = () => {
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDetailModalOpen(false)}>
+            <Button variant="outline" className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50" onClick={() => setIsDetailModalOpen(false)}>
               Close
             </Button>
             {selectedReservation && (
-              <Button onClick={() => {
+              <Button className="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" onClick={() => {
                 setIsDetailModalOpen(false);
                 openUpdateModal(selectedReservation);
               }}>
@@ -562,25 +582,25 @@ const ReservationManagement = () => {
 
       {/* Update Reservation Modal */}
       <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
-            <DialogTitle>Update Reservation</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-600">Update Reservation</DialogTitle>
+            <DialogDescription className="text-gray-500">
               Modify reservation status, table assignment, and notes
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label className="text-gray-600">Status</Label>
               <Select
                 value={updateData.status}
                 onValueChange={(value) => setUpdateData(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white border-gray-200">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -591,30 +611,32 @@ const ReservationManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label>Table Number</Label>
+              <Label className="text-gray-600">Table Number</Label>
               <Input
                 placeholder="e.g., Table 12, Booth 3, Patio A"
                 value={updateData.tableNumber}
                 onChange={(e) => setUpdateData(prev => ({ ...prev, tableNumber: e.target.value }))}
+                className="bg-white border-gray-200"
               />
             </div>
             
             <div className="space-y-2">
-              <Label>Admin Notes</Label>
+              <Label className="text-gray-600">Admin Notes</Label>
               <Textarea
                 placeholder="Internal notes about this reservation..."
                 value={updateData.adminNotes}
                 onChange={(e) => setUpdateData(prev => ({ ...prev, adminNotes: e.target.value }))}
                 rows={3}
+                className="bg-white border-gray-200"
               />
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUpdateModalOpen(false)}>
+            <Button variant="outline" className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50" onClick={() => setIsUpdateModalOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdateReservation}>
+            <Button className="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50" onClick={handleUpdateReservation}>
               Update Reservation
             </Button>
           </DialogFooter>

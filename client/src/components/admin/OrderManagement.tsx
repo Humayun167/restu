@@ -90,7 +90,11 @@ const OrderManagement = () => {
         setIsLoading(true);
         try {
             console.log('🔄 Updating order status:', { orderId, newStatus });
+            console.log('🔑 Admin token present:', !!localStorage.getItem('adminToken'));
+            console.log('🔐 Admin logged in:', localStorage.getItem('isAdminLoggedIn'));
+            
             const response = await adminAPI.updateOrderStatus(orderId, newStatus);
+            console.log('📨 Update response:', response);
             
             if (response.success) {
                 const updatedOrders = orders.map(order =>
@@ -100,20 +104,32 @@ const OrderManagement = () => {
                 
                 toast({
                     title: "Status Updated",
-                    description: `Order status updated successfully`,
+                    description: `Order status updated to ${newStatus}`,
                 });
             } else {
+                console.error('❌ Update failed:', response.message);
                 toast({
                     title: "Error",
-                    description: "Failed to update order status",
+                    description: response.message || "Failed to update order status",
                     variant: "destructive",
                 });
             }
         } catch (error) {
             console.error('💥 Error updating order status:', error);
+            
+            let errorMessage = "Failed to update order status";
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+                if (axiosError.response?.data?.message) {
+                    errorMessage = axiosError.response.data.message;
+                } else if (axiosError.message) {
+                    errorMessage = axiosError.message;
+                }
+            }
+            
             toast({
                 title: "Error",
-                description: "Failed to update order status",
+                description: errorMessage,
                 variant: "destructive",
             });
         } finally {

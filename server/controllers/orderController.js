@@ -212,3 +212,44 @@ export const getAdminOrdersEnhanced = async (req, res) => {
     }
 };
 
+// Update order status: /api/order/status
+export const updateOrderStatus = async (req, res) => {
+    try {
+        const { orderId, status } = req.body;
+        
+        console.log('🔄 Updating order status:', { orderId, status });
+        
+        if (!orderId || !status) {
+            return res.json({ success: false, message: 'Order ID and status are required' });
+        }
+
+        // Validate status
+        const validStatuses = ['pending', 'confirmed', 'preparing', 'out-for-delivery', 'delivered', 'cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.json({ success: false, message: 'Invalid order status' });
+        }
+
+        // Find and update order
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { orderStatus: status },
+            { new: true, runValidators: true }
+        ).populate('userId', 'name email');
+
+        if (!order) {
+            return res.json({ success: false, message: 'Order not found' });
+        }
+
+        console.log('✅ Order status updated successfully:', order.orderNumber);
+        
+        res.json({ 
+            success: true, 
+            message: 'Order status updated successfully',
+            order 
+        });
+    } catch (error) {
+        console.error('❌ Error updating order status:', error.message);
+        res.json({ success: false, message: error.message });
+    }
+};
+

@@ -43,7 +43,17 @@ const ProductList = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('adminToken');
-            if (!token) {
+            const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+            
+            console.log('🔍 Delete product debug:');
+            console.log('Admin logged in flag:', isAdminLoggedIn);
+            console.log('Admin token present:', !!token);
+            console.log('Backend URL:', backendUrl);
+            console.log('Product ID:', productId);
+            
+            // Check if admin is logged in
+            if (!isAdminLoggedIn) {
                 toast({
                     title: "Error",
                     description: "Admin authentication required. Please login again.",
@@ -51,17 +61,25 @@ const ProductList = () => {
                 });
                 return;
             }
+            
+            // Prepare headers - include token if available
+            const headers: HeadersInit = {
+                'Content-Type': 'application/json',
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
-            const response = await fetch(`/api/product/delete/${productId}`, {
+            const response = await fetch(`${backendUrl}/api/product/delete/${productId}`, {
                 method: 'DELETE',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
+                credentials: 'include', // Include cookies for httpOnly token
+                headers,
             });
 
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Response data:', data);
             
             if (data.success) {
                 toast({
